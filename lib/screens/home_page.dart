@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:math_expressions/math_expressions.dart";
 import "package:prodigy_ad_01/widgets/button.dart";
 
 class HomePage extends StatefulWidget {
@@ -16,11 +17,11 @@ class _HomePageState extends State<HomePage> {
     "C",
     "DEL",
     "%",
-    "/",
+    "÷",
     "9",
     "8",
     "7",
-    "*",
+    "x",
     "6",
     "5",
     "4",
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       alignment: AlignmentDirectional.centerEnd,
                       child:
-                          Text(userInput, style: theme.textTheme.displayMedium),
+                          Text(userInput, style: theme.textTheme.displayLarge),
                     ),
                     Container(
                       alignment: AlignmentDirectional.centerEnd,
@@ -121,18 +122,33 @@ class _HomePageState extends State<HomePage> {
     } else if (text == "ANS") {
       userInput += answer;
     } else if (text == "=") {
-      answer = userInput;
+      _calculate();
     } else {
       userInput += text;
     }
     setState(() {});
   }
 
+  _calculate() {
+    if (userInput == "") {
+      return;
+    }
+
+    final finalUserInput = userInput.replaceAll("x", "*").replaceAll("÷", "/");
+    Parser p = Parser();
+    Expression exp = p.parse(finalUserInput);
+
+    ContextModel cm = ContextModel();
+    double eval = exp.evaluate(EvaluationType.REAL, cm);
+
+    answer = eval.toString();
+  }
+
   bool _isOperator(String text) {
     return text == "+" ||
         text == "-" ||
-        text == "*" ||
-        text == "/" ||
+        text == "x" ||
+        text == "÷" ||
         text == "%" ||
         text == "=";
   }
